@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MuzickiFestivali.API/MuzickiFestivali.API.csproj" />
+  <Project Path="MuzickiFestivali.Domain/MuzickiFestivali.Domain.csproj" />
+  <Project Path="MuzickiFestivali.Infrastructure/MuzickiFestivali.Infrastructure.csproj" />
+</Solution>

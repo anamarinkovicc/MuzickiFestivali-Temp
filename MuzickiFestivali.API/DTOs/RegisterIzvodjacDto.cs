@@ -1,0 +1,31 @@
+﻿using MuzickiFestivali.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
+
+namespace MuzickiFestivali.API.DTOs
+{
+    public class RegisterIzvodjacDto
+    {
+        [Required(ErrorMessage = "Ime je obavezno")]
+        public string Ime { get; set; }
+
+        [Required(ErrorMessage = "Prezime je obavezno")]
+        public string Prezime { get; set; }
+
+        [Required]
+        [EmailAddress(ErrorMessage = "Neispravan format email adrese")]
+        public string Email { get; set; }
+
+        [Required]
+        [MinLength(6, ErrorMessage = "Lozinka mora imati bar 6 karaktera")]
+        public string Lozinka { get; set; }
+
+        [Required(ErrorMessage = "Umetničko ime je obavezno")]
+        public string UmetnickoIme { get; set; }
+
+        [Required(ErrorMessage = "Biografija je obavezna")]
+        public string Biografija { get; set; }
+
+        [Required(ErrorMessage = "Žanr je obavezan")]
+        public Zanr Zanr { get; set; }
+    }
+}
