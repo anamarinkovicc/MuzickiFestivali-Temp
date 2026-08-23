@@ -13,7 +13,7 @@ namespace MuzickiFestivali.Domain.Entities
         public int idNastup { get; set; }
         public virtual Termin termin { get; set; }
         public string uloga { get; set; }
-        public bool potvrdenDolazak { get; set; }
-        public string napomena { get; set; }
+        public bool potvrdjenDolazak { get; set; }
+        public string? napomena { get; set; }
     }
 }
