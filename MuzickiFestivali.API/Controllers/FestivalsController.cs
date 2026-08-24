@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Festivals.Commands;
 using MuzickiFestivali.API.Features.Festivals.Queries;
@@ -12,10 +13,12 @@ namespace MuzickiFestivali.API.Controllers
     public class FestivalsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public FestivalsController(IMediator mediator)
+        public FestivalsController(IMediator mediator, IStringLocalizer<SharedResources> localizer)
         {
             _mediator = mediator;
+            _localizer = localizer;
         }
 
         [HttpPost]
@@ -24,7 +27,7 @@ namespace MuzickiFestivali.API.Controllers
             int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
 
             if (trenutniKorisnikId == null)
-                return Unauthorized("Morate biti prijavljeni da biste kreirali festival.");
+                return Unauthorized(_localizer["User_Unauthorized"].Value);
 
             var command = new CreateFestivalCommand(
                 dto.Naziv,
@@ -52,7 +55,7 @@ namespace MuzickiFestivali.API.Controllers
             var result = await _mediator.Send(new GetFestivalByIdQuery(id));
 
             if (result == null)
-                return NotFound($"Festival sa ID-jem {id} nije pronađen.");
+                return NotFound(_localizer["Festival_NotFound"].Value);
 
             return Ok(result);
         }
@@ -71,7 +74,8 @@ namespace MuzickiFestivali.API.Controllers
 
             var uspesno = await _mediator.Send(command);
 
-            if (!uspesno) return NotFound("Festival nije pronađen.");
+            if (!uspesno)
+                return NotFound(_localizer["Festival_NotFound"].Value);
 
             return NoContent();
         }
@@ -81,9 +85,10 @@ namespace MuzickiFestivali.API.Controllers
         {
             var uspesno = await _mediator.Send(new DeleteFestivalCommand(id));
 
-            if (!uspesno) return NotFound("Festival nije pronađen.");
+            if (!uspesno)
+                return NotFound(_localizer["Festival_NotFound"].Value);
 
-            return Ok("Festival je uspešno obrisan.");
+            return Ok(_localizer["Festival_SuccessDelete"].Value);
         }
     }
 }

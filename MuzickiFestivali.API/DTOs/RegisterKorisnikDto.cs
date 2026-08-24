@@ -5,21 +5,35 @@ namespace MuzickiFestivali.API.DTOs
 {
     public class RegisterKorisnikDto
     {
-        [Required(ErrorMessage = "Ime je obavezno")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_FirstNameRequired")]
         public string Ime { get; set; }
 
-        [Required(ErrorMessage = "Prezime je obavezno")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_LastNameRequired")]
         public string Prezime { get; set; }
 
-        [Required]
-        [EmailAddress(ErrorMessage = "Neispravan format email adrese")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_EmailRequired")]
+        [EmailAddress(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_EmailInvalid")]
         public string Email { get; set; }
 
-        [Required]
-        [MinLength(6, ErrorMessage = "Lozinka mora imati bar 6 karaktera")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_PasswordRequired")]
+        [MinLength(6,
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_PasswordMinLength")]
         public string Lozinka { get; set; }
 
-        [Required(ErrorMessage = "Morate izabrati omiljeni žanr")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_FavoriteGenreRequired")]
         public Zanr OmiljeniZanr { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Auth.Commands;
 using MuzickiFestivali.API.Features.Users.Commands;
@@ -12,10 +13,12 @@ namespace MuzickiFestivali.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator, IStringLocalizer<SharedResources> localizer)
         {
             _mediator = mediator;
+            _localizer = localizer;
         }
 
 
@@ -71,7 +74,7 @@ namespace MuzickiFestivali.API.Controllers
 
             if (userId == null)
             {
-                return Unauthorized("Pogrešan email ili lozinka.");
+                return Unauthorized(_localizer["User_InvalidCredentials"].Value);
             }
 
             HttpContext.Session.SetInt32("UserId", userId.Value);
@@ -83,7 +86,7 @@ namespace MuzickiFestivali.API.Controllers
         {
             await _mediator.Send(new LogoutUserCommand());
             HttpContext.Session.Clear();
-            return Ok("Uspešno ste se odjavili.");
+            return Ok(_localizer["User_SuccessLogout"].Value);
         }
     }
 

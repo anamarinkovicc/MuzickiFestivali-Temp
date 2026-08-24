@@ -1,9 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Appearances.Commands;
 using MuzickiFestivali.API.Features.Appearances.Queries;
+//using MuzickiFestivali.API.Resources;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MuzickiFestivali.API.Controllers
 {
@@ -12,8 +16,14 @@ namespace MuzickiFestivali.API.Controllers
     public class AppearancesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public AppearancesController(IMediator mediator) => _mediator = mediator;
+        public AppearancesController(IMediator mediator, IStringLocalizer<SharedResources> localizer)
+        {
+            _mediator = mediator;
+            _localizer = localizer;
+        }
+
 
         [HttpPost("{idOsoba}/{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult> AssignPerformer(int idOsoba, int idFestival, int idNastup, int idTermin, NastupaDto dto)
@@ -29,9 +39,9 @@ namespace MuzickiFestivali.API.Controllers
 
             var uspesno = await _mediator.Send(command);
             if (!uspesno)
-                return NotFound("Izvođač ili termin nisu pronađeni.");
+                return NotFound(_localizer["Appearance_PerformerOrSlotNotFound"].Value);
 
-            return Ok("Izvođač je uspešno raspoređen u termin. Status dolaska je postavljen na 'Nepotvrđen'.");
+            return Ok(_localizer["Appearance_SuccessAssignment"].Value);
         }
 
         [HttpPut("{idOsoba}/{idFestival}/{idNastup}/{idTermin}")]
@@ -49,7 +59,7 @@ namespace MuzickiFestivali.API.Controllers
 
             var uspesno = await _mediator.Send(command);
             if (!uspesno)
-                return NotFound("Zapis o nastupanju nije pronađen.");
+                return NotFound(_localizer["Appearance_NotFound"].Value);
 
             return NoContent();
         }
@@ -61,9 +71,9 @@ namespace MuzickiFestivali.API.Controllers
             var uspesno = await _mediator.Send(command);
 
             if (!uspesno)
-                return NotFound("Zapis o nastupanju nije pronađen.");
+                return NotFound(_localizer["Appearance_NotFound"].Value);
 
-            return Ok("Izvođač je uspešno uklonjen iz termina.");
+            return Ok(_localizer["Appearance_SuccessRemoval"].Value);
         }
 
         [HttpGet("slot/{idFestival}/{idNastup}/{idTermin}")]
@@ -79,7 +89,7 @@ namespace MuzickiFestivali.API.Controllers
             int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
 
             if (trenutniKorisnikId == null)
-                return Unauthorized("Morate biti prijavljeni da biste potvrdili dolazak.");
+                return Unauthorized(_localizer["User_Unauthorized"].Value);
 
             var command = new ConfirmArrivalCommand(
                 trenutniKorisnikId.Value,
@@ -91,9 +101,9 @@ namespace MuzickiFestivali.API.Controllers
             var uspesno = await _mediator.Send(command);
 
             if (!uspesno)
-                return NotFound("Nije pronađen angažman za vaš nalog na ovom terminu.");
+                return NotFound(_localizer["Appearance_NotFound"].Value);
 
-            return Ok("Uspešno ste potvrdili svoj dolazak!");
+            return Ok(_localizer["Appearance_ArrivalConfirmed"].Value);
         }
         [HttpGet("my-schedule")]
         public async Task<ActionResult<List<DisplayMyAppearanceDto>>> GetMySchedule()
@@ -101,7 +111,7 @@ namespace MuzickiFestivali.API.Controllers
             int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
 
             if (trenutniKorisnikId == null)
-                return Unauthorized("Morate biti prijavljeni da biste videli svoj raspored nastupa.");
+                return Unauthorized(_localizer["User_Unauthorized"].Value);
 
             var query = new GetMyAppearancesQuery(trenutniKorisnikId.Value);
             var result = await _mediator.Send(query);

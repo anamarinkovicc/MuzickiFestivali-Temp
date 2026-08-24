@@ -4,20 +4,32 @@ namespace MuzickiFestivali.API.DTOs
 {
     public class FestivalDto
     {
-        [Required(ErrorMessage = "Naziv festivala je obavezan")]
-        [StringLength(100, ErrorMessage = "Naziv ne može biti duži od 100 karaktera")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Festival_NameRequired")]
+        [StringLength(100,
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Festival_NameMaxLength")]
         public string Naziv { get; set; }
 
-        [Required(ErrorMessage = "Opis je obavezan")]
-        public string Opis { get; set; }
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Festival_DescriptionRequired")]
+        public string Opis { get; set; } 
 
-        [Required]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Festival_StartDateRequired")]
         public DateTime DatumPocetka { get; set; }
 
-        [Required]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Festival_EndDateRequired")]
         public DateTime DatumZavrsetka { get; set; }
 
-        [Range(1, 1000000, ErrorMessage = "Kapacitet mora biti pozitivan broj")]
+        [Range(1, 1000000,
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Festival_CapacityRange")]
         public int Kapacitet { get; set; }
     }
 }

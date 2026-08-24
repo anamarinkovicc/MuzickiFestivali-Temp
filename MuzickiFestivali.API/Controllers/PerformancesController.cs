@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Performances.Commands;
 using MuzickiFestivali.API.Features.Performances.Queries;
@@ -12,7 +13,13 @@ namespace MuzickiFestivali.API.Controllers
     public class PerformancesController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public PerformancesController(IMediator mediator) => _mediator = mediator;
+        private readonly IStringLocalizer<SharedResources> _localizer;
+
+        public PerformancesController(IMediator mediator, IStringLocalizer<SharedResources> localizer)
+        {
+            _mediator = mediator;
+            _localizer = localizer;
+        }
 
         [HttpPost("{idFestival}")]
         public async Task<ActionResult<int>> Create(int idFestival, NastupDto dto)
@@ -35,7 +42,7 @@ namespace MuzickiFestivali.API.Controllers
             var result = await _mediator.Send(new GetNastupByIdQuery(idFestival, idNastup));
 
             if (result == null)
-                return NotFound($"Nastup sa ID-jem {idNastup} u okviru festivala {idFestival} nije pronađen.");
+                return NotFound(_localizer["Performance_NotFound"].Value);
 
             return Ok(result);
         }
@@ -47,7 +54,7 @@ namespace MuzickiFestivali.API.Controllers
             var uspesno = await _mediator.Send(command);
 
             if (!uspesno)
-                return NotFound("Nije moguće izmeniti nastup jer nije pronađen.");
+                return NotFound(_localizer["Performance_NotFound"].Value);
 
             return NoContent();
         }
@@ -58,9 +65,9 @@ namespace MuzickiFestivali.API.Controllers
             var uspesno = await _mediator.Send(new DeleteNastupCommand(idFestival, idNastup));
 
             if (!uspesno)
-                return NotFound("Nastup nije pronađen, pa ne može biti obrisan.");
+                return NotFound(_localizer["Performance_NotFound"].Value);
 
-            return Ok("Nastup je uspešno obrisan.");
+            return Ok(_localizer["Performance_SuccessDelete"].Value);
         }
     }
 }

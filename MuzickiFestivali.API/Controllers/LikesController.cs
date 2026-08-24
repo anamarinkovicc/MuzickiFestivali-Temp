@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Likes.Commands;
 using MuzickiFestivali.API.Features.Likes.Queries;
@@ -12,8 +13,13 @@ namespace MuzickiFestivali.API.Controllers
     public class LikesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public LikesController(IMediator mediator) => _mediator = mediator;
+        public LikesController(IMediator mediator, IStringLocalizer<SharedResources> localizer)
+        {
+            _mediator = mediator;
+            _localizer = localizer;
+        }
 
         [HttpPost("performance/{idFestival}/{idNastup}")]
         public async Task<ActionResult> Like(int idFestival, int idNastup)
@@ -21,15 +27,15 @@ namespace MuzickiFestivali.API.Controllers
             int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
 
             if (trenutniKorisnikId == null)
-                return Unauthorized("Morate biti prijavljeni da biste lajkovali nastup.");
+                return Unauthorized(_localizer["User_Unauthorized"].Value);
 
             var command = new LikeNastupCommand(idFestival, idNastup, trenutniKorisnikId.Value);
             var uspesno = await _mediator.Send(command);
 
             if (!uspesno)
-                return NotFound("Nastup nije pronađen.");
+                return NotFound(_localizer["Performance_NotFound"].Value);
 
-            return Ok("Nastup je uspešno lajkovan.");
+            return Ok(_localizer["Like_SuccessAdd"].Value);
         }
 
         [HttpDelete("performance/{idFestival}/{idNastup}")]
@@ -38,15 +44,15 @@ namespace MuzickiFestivali.API.Controllers
             int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
 
             if (trenutniKorisnikId == null)
-                return Unauthorized("Morate biti prijavljeni da biste povukli lajk.");
+                return Unauthorized(_localizer["User_Unauthorized"].Value);
 
             var command = new UnlikeNastupCommand(idFestival, idNastup, trenutniKorisnikId.Value);
             var uspesno = await _mediator.Send(command);
 
             if (!uspesno)
-                return NotFound("Lajk nije pronađen.");
+                return NotFound(_localizer["Like_NotFound"].Value);
 
-            return Ok("Lajk je uspešno povučen.");
+            return Ok(_localizer["Like_SuccessRemove"].Value);
         }
 
         [HttpGet("my-liked-performances")]
@@ -55,7 +61,7 @@ namespace MuzickiFestivali.API.Controllers
             int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
 
             if (trenutniKorisnikId == null)
-                return Unauthorized("Morate biti prijavljeni da biste videli svoje lajkovane nastupe.");
+                return Unauthorized(_localizer["User_Unauthorized"].Value);
 
             var query = new GetMyLikedNastupiQuery(trenutniKorisnikId.Value);
             var result = await _mediator.Send(query);

@@ -4,11 +4,17 @@ namespace MuzickiFestivali.API.DTOs
 {
     public class LoginDto
     {
-        [Required(ErrorMessage = "Email je obavezan")]
-        [EmailAddress(ErrorMessage = "Neispravan format email adrese")]
+        [Required(
+           ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+           ErrorMessageResourceName = "User_EmailRequired")]
+        [EmailAddress(
+           ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+           ErrorMessageResourceName = "User_EmailInvalid")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Lozinka je obavezna")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "User_PasswordRequired")]
         public string Lozinka { get; set; }
     }
 }

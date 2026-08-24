@@ -5,18 +5,26 @@ namespace MuzickiFestivali.API.DTOs
 {
     public class TerminDto
     {
-        [Required(ErrorMessage = "Vreme početka je obavezno")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Slot_StartTimeRequired")]
         public DateTime VremePocetka { get; set; }
 
-        [Required(ErrorMessage = "Vreme završetka je obavezno")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Slot_EndTimeRequired")]
         public DateTime VremeZavrsetka { get; set; }
 
-        public string? Napomena { get; set; }
+        public string? Napomena { get; set; } 
 
-        [Required(ErrorMessage = "Tip termina je obavezan")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Slot_TypeRequired")]
         public TipTermina Tip { get; set; }
 
-        [Required(ErrorMessage = "Morate odabrati binu za ovaj termin")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Slot_StageRequired")]
         public int IdBina { get; set; }
     }
 }

@@ -4,12 +4,17 @@ namespace MuzickiFestivali.API.DTOs
 {
     public class NastupaDto
     {
-        [Required(ErrorMessage = "Uloga izvođača je obavezna")]
-        [StringLength(100, ErrorMessage = "Uloga ne može biti duža od 100 karaktera")]
+        [Required(
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Appearance_RoleRequired")]
+        [StringLength(100,
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Appearance_RoleMaxLength")]
         public string Uloga { get; set; }
 
-
-        [StringLength(500, ErrorMessage = "Napomena ne može biti duža od 500 karaktera")]
+        [StringLength(500,
+            ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
+            ErrorMessageResourceName = "Appearance_NoteMaxLength")]
         public string? Napomena { get; set; }
     }
 }

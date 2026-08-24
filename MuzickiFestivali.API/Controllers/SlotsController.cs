@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Slots.Commands;
 using MuzickiFestivali.API.Features.Slots.Queries;
@@ -12,7 +13,13 @@ namespace MuzickiFestivali.API.Controllers
     public class SlotsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public SlotsController(IMediator mediator) => _mediator = mediator;
+        private readonly IStringLocalizer<SharedResources> _localizer;
+
+        public SlotsController(IMediator mediator, IStringLocalizer<SharedResources> localizer)
+        {
+            _mediator = mediator;
+            _localizer = localizer;
+        }
 
         [HttpPost("{idFestival}/{idNastup}")]
         public async Task<ActionResult<int>> Create(int idFestival, int idNastup, TerminDto dto)
@@ -43,7 +50,7 @@ namespace MuzickiFestivali.API.Controllers
             var result = await _mediator.Send(new GetTerminByIdQuery(idFestival, idNastup, idTermin));
 
             if (result == null)
-                return NotFound("Termin nije pronađen.");
+                return NotFound(_localizer["Slot_NotFound"].Value);
 
             return Ok(result);
         }
@@ -65,7 +72,7 @@ namespace MuzickiFestivali.API.Controllers
             var uspesno = await _mediator.Send(command);
 
             if (!uspesno)
-                return NotFound("Termin nije pronađen.");
+                return NotFound(_localizer["Slot_NotFound"].Value);
 
             return NoContent();
         }
@@ -76,9 +83,9 @@ namespace MuzickiFestivali.API.Controllers
             var uspesno = await _mediator.Send(new DeleteTerminCommand(idFestival, idNastup, idTermin));
 
             if (!uspesno)
-                return NotFound("Termin nije pronađen.");
+                return NotFound(_localizer["Slot_NotFound"].Value);
 
-            return Ok("Termin je uspešno obrisan.");
+            return Ok(_localizer["Slot_SuccessDelete"].Value);
         }
     }
 }
