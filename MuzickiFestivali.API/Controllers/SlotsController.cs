@@ -87,6 +87,13 @@ namespace MuzickiFestivali.API.Controllers
 
             return Ok(_localizer["Slot_SuccessDelete"].Value);
         }
+
+        [HttpGet("public/{idFestival}/{idNastup}")]
+        public async Task<ActionResult<List<DisplayTerminDto>>> GetGlavniByNastup(int idFestival, int idNastup)
+        {
+            var result = await _mediator.Send(new GetGlavniTerminiByNastupQuery(idFestival, idNastup));
+            return Ok(result);
+        }
     }
 }
 

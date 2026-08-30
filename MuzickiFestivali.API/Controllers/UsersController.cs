@@ -5,6 +5,7 @@ using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Auth.Commands;
 using MuzickiFestivali.API.Features.Users.Commands;
+using MuzickiFestivali.API.Features.Users.Queries;
 
 namespace MuzickiFestivali.API.Controllers
 {
@@ -67,7 +68,7 @@ namespace MuzickiFestivali.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginDto dto)
+        public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {
             var command = new LoginUserCommand(dto.Email, dto.Lozinka);
             var userId = await _mediator.Send(command);
@@ -78,7 +79,9 @@ namespace MuzickiFestivali.API.Controllers
             }
 
             HttpContext.Session.SetInt32("UserId", userId.Value);
-            return Ok(new { userId = userId.Value });
+            var provereniId = HttpContext.Session.GetInt32("UserId");
+
+            return Ok(new { userId = userId.Value, sessionUserId = provereniId });
         }
 
         [HttpPost("logout")]
@@ -87,6 +90,22 @@ namespace MuzickiFestivali.API.Controllers
             await _mediator.Send(new LogoutUserCommand());
             HttpContext.Session.Clear();
             return Ok(_localizer["User_SuccessLogout"].Value);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DisplayUserDto>> GetById(int id)
+        {
+            var result = await _mediator.Send(new GetOsobaByIdQuery(id));
+            if (result == null) return NotFound(_localizer["User_NotFound"]?.Value ?? "Korisnik nije pronađen.");
+            return Ok(result);
+        }
+
+        [HttpGet("izvodjaci")]
+        public async Task<ActionResult<List<DisplayIzvodjacDto>>> GetAllIzvodjaci()
+        {
+            var query = new GetAllIzvodjaciQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 

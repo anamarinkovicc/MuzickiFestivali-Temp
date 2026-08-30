@@ -9,5 +9,6 @@ namespace MuzickiFestivali.API.DTOs
         public string Opis { get; set; }
         public Zanr Zanr { get; set; }
         public int IdFestival { get; set; }
+        public int LajkoviCount { get; set; }
     }
 }

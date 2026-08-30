@@ -246,4 +246,13 @@
   <data name="Slot_StageRequired" xml:space="preserve">
     <value>Selecting a stage is required.</value>
   </data>
+  <data name="Stage_NotFound" xml:space="preserve">
+    <value>Stage not found.</value>
+  </data>
+  <data name="Slot_InvalidTimeRange" xml:space="preserve">
+    <value>The end time of the slot must be after the start time!</value>
+  </data>
+  <data name="Slot_OutsideFestivalDates" xml:space="preserve">
+    <value>The slot must take place within the festival's start and end dates!</value>
+  </data>
 </root>

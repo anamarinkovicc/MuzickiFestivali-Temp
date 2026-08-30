@@ -246,4 +246,13 @@
   <data name="Slot_StageRequired" xml:space="preserve">
     <value>Morate izabrati binu za ovaj termin.</value>
   </data>
+  <data name="Stage_NotFound" xml:space="preserve">
+    <value>Bina nije pronađena.</value>
+  </data>
+  <data name="Slot_InvalidTimeRange" xml:space="preserve">
+    <value>Vreme završetka termina mora biti nakon vremena početka!</value>
+  </data>
+  <data name="Slot_OutsideFestivalDates" xml:space="preserve">
+    <value>Termin se mora održati u toku trajanja festivala!</value>
+  </data>
 </root>

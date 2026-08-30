@@ -14,7 +14,7 @@ namespace MuzickiFestivali.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<Nastup>> GetByFestivalIdAsync(int idFestival) =>
-            await DbSet.Where(n => n.idFestival == idFestival)
+            await DbSet.Include(n => n.lajkovi).Where(n => n.idFestival == idFestival)
                        .ToListAsync();
     }
 }

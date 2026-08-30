@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Localization;
 using MuzickiFestivali.Domain.Enums;
 using MuzickiFestivali.Domain.Interfaces;
 
@@ -17,11 +18,28 @@ namespace MuzickiFestivali.API.Features.Slots.Commands
     public class UpdateTerminCommandHandler : IRequestHandler<UpdateTerminCommand, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStringLocalizer<SharedResources> _localizer; 
 
-        public UpdateTerminCommandHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+        public UpdateTerminCommandHandler(IUnitOfWork unitOfWork, IStringLocalizer<SharedResources> localizer)
+        {
+            _unitOfWork = unitOfWork;
+            _localizer = localizer;
+        }
 
         public async Task<bool> Handle(UpdateTerminCommand request, CancellationToken cancellationToken)
         {
+            var festival = await _unitOfWork.Festivali.GetByIdAsync(request.IdFestival);
+            if (festival == null) return false;
+
+            if (request.VremePocetka >= request.VremeZavrsetka)
+            {
+                throw new ArgumentException(_localizer["Slot_InvalidTimeRange"].Value);
+            }
+
+            if (request.VremePocetka < festival.datumPocetka || request.VremeZavrsetka > festival.datumZavrsetka)
+            {
+                throw new ArgumentException(_localizer["Slot_OutsideFestivalDates"].Value);
+            }
             var termin = await _unitOfWork.Termini.GetByIdAsync(request.IdFestival, request.IdNastup, request.IdTermin);
 
             if (termin == null) return false;

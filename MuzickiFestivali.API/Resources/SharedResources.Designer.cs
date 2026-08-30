@@ -313,11 +313,29 @@ namespace MuzickiFestivali.API.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vreme završetka termina mora biti nakon vremena početka!.
+        /// </summary>
+        public static string Slot_InvalidTimeRange {
+            get {
+                return ResourceManager.GetString("Slot_InvalidTimeRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Termin nije pronađen..
         /// </summary>
         public static string Slot_NotFound {
             get {
                 return ResourceManager.GetString("Slot_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Termin se mora održati u toku trajanja festivala!.
+        /// </summary>
+        public static string Slot_OutsideFestivalDates {
+            get {
+                return ResourceManager.GetString("Slot_OutsideFestivalDates", resourceCulture);
             }
         }
         
@@ -354,6 +372,15 @@ namespace MuzickiFestivali.API.Resources {
         public static string Slot_TypeRequired {
             get {
                 return ResourceManager.GetString("Slot_TypeRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bina nije pronađena..
+        /// </summary>
+        public static string Stage_NotFound {
+            get {
+                return ResourceManager.GetString("Stage_NotFound", resourceCulture);
             }
         }
         

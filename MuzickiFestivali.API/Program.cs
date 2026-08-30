@@ -19,6 +19,19 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 builder.Services.AddControllers();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") 
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); 
+        });
+});
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -28,6 +41,9 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -54,6 +70,8 @@ var localizationOptions = new RequestLocalizationOptions()
 app.UseRequestLocalization(localizationOptions);
 
 app.UseSession();
+
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 

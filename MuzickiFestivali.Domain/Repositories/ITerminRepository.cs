@@ -9,5 +9,6 @@ namespace MuzickiFestivali.Domain.Repositories
     public interface ITerminRepository : IRepository<Termin>
     {
         Task<IEnumerable<Termin>> GetByNastupIdAsync(int idFestival, int idNastup);
+        Task<IEnumerable<Termin>> GetGlavniTerminiByNastupAsync(int idFestival, int idNastup);
     }
 }

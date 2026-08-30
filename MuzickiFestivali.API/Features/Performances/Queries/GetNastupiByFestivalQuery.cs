@@ -22,7 +22,8 @@ namespace MuzickiFestivali.API.Features.Performances.Queries
                 Naziv = n.naziv,
                 Opis = n.opis,
                 Zanr = n.zanr,
-                IdFestival = n.idFestival
+                IdFestival = n.idFestival,
+                LajkoviCount = n.lajkovi != null ? n.lajkovi.Count : 0
             }).ToList();
         }
     }
