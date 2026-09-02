@@ -1,13 +1,16 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Festivals.Commands;
 using MuzickiFestivali.API.Features.Festivals.Queries;
+using System.Security.Claims;
 
 namespace MuzickiFestivali.API.Controllers
 {
+    [Authorize(Roles = "Zaposleni")]
     [Route("api/[controller]")]
     [ApiController]
     public class FestivalsController : ControllerBase
@@ -24,10 +27,14 @@ namespace MuzickiFestivali.API.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Create(FestivalDto dto)
         {
-            int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (trenutniKorisnikId == null)
+            if (userIdClaim == null)
+            {
                 return Unauthorized(_localizer["User_Unauthorized"].Value);
+            }
+
+            int trenutniKorisnikId = int.Parse(userIdClaim);
 
             var command = new CreateFestivalCommand(
                 dto.Naziv,
@@ -35,13 +42,14 @@ namespace MuzickiFestivali.API.Controllers
                 dto.DatumPocetka,
                 dto.DatumZavrsetka,
                 dto.Kapacitet,
-                trenutniKorisnikId.Value
+                trenutniKorisnikId
             );
 
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<DisplayFestivalDto>>> GetAll()
         {
@@ -49,6 +57,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<DisplayFestivalDto>> GetById(int id)
         {

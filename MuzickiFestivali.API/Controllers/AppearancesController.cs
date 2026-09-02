@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -7,6 +8,7 @@ using MuzickiFestivali.API.Features.Appearances.Commands;
 using MuzickiFestivali.API.Features.Appearances.Queries;
 //using MuzickiFestivali.API.Resources;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MuzickiFestivali.API.Controllers
@@ -24,7 +26,7 @@ namespace MuzickiFestivali.API.Controllers
             _localizer = localizer;
         }
 
-
+        [Authorize(Roles = "Zaposleni")]
         [HttpPost("{idOsoba}/{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult> AssignPerformer(int idOsoba, int idFestival, int idNastup, int idTermin, NastupaDto dto)
         {
@@ -44,6 +46,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(_localizer["Appearance_SuccessAssignment"].Value);
         }
 
+        [Authorize(Roles = "Zaposleni")]
         [HttpPut("{idOsoba}/{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult> UpdateAssignment(int idOsoba, int idFestival, int idNastup, int idTermin, UpdateNastupaDto dto)
         {
@@ -64,6 +67,7 @@ namespace MuzickiFestivali.API.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Zaposleni")]
         [HttpDelete("{idOsoba}/{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult> RemoveAssignment(int idOsoba, int idFestival, int idNastup, int idTermin)
         {
@@ -76,6 +80,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(_localizer["Appearance_SuccessRemoval"].Value);
         }
 
+        [AllowAnonymous]
         [HttpGet("slot/{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult<List<DisplayNastupaDto>>> GetPerformersForSlot(int idFestival, int idNastup, int idTermin)
         {
@@ -83,16 +88,19 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Izvodjac")]
         [HttpPatch("confirm/{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult> ConfirmArrival(int idFestival, int idNastup, int idTermin)
         {
-            int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (trenutniKorisnikId == null)
+            if (userIdClaim == null)
                 return Unauthorized(_localizer["User_Unauthorized"].Value);
 
+            int trenutniKorisnikId = int.Parse(userIdClaim);
+
             var command = new ConfirmArrivalCommand(
-                trenutniKorisnikId.Value,
+                trenutniKorisnikId,
                 idFestival,
                 idNastup,
                 idTermin
@@ -105,15 +113,22 @@ namespace MuzickiFestivali.API.Controllers
 
             return Ok(_localizer["Appearance_ArrivalConfirmed"].Value);
         }
+
+        [Authorize(Roles = "Izvodjac")]
         [HttpGet("my-schedule")]
         public async Task<ActionResult<List<DisplayMyAppearanceDto>>> GetMySchedule()
         {
-            int? trenutniKorisnikId = HttpContext.Session.GetInt32("UserId");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (trenutniKorisnikId == null)
+            if (userIdClaim == null)
                 return Unauthorized(_localizer["User_Unauthorized"].Value);
 
-            var query = new GetMyAppearancesQuery(trenutniKorisnikId.Value);
+            //int trenutniKorisnikId = int.Parse(userIdClaim);
+
+            if (!int.TryParse(userIdClaim, out int trenutniKorisnikId))
+                return Unauthorized(_localizer["User_Unauthorized"].Value);
+
+            var query = new GetMyAppearancesQuery(trenutniKorisnikId);
             var result = await _mediator.Send(query);
 
             return Ok(result);

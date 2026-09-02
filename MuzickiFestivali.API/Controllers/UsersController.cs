@@ -1,11 +1,16 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Microsoft.IdentityModel.Tokens;
 using MuzickiFestivali.API.DTOs;
 using MuzickiFestivali.API.Features.Auth.Commands;
 using MuzickiFestivali.API.Features.Users.Commands;
 using MuzickiFestivali.API.Features.Users.Queries;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace MuzickiFestivali.API.Controllers
 {
@@ -22,7 +27,7 @@ namespace MuzickiFestivali.API.Controllers
             _localizer = localizer;
         }
 
-
+        [Authorize(Roles = "Zaposleni")]
         [HttpPost("register-zaposleni")]
         public async Task<ActionResult<int>> Register(RegisterZaposleniDto dto)
         {
@@ -71,26 +76,49 @@ namespace MuzickiFestivali.API.Controllers
         public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {
             var command = new LoginUserCommand(dto.Email, dto.Lozinka);
-            var userId = await _mediator.Send(command);
+            var loggedUser = await _mediator.Send(command);
 
-            if (userId == null)
+            if (loggedUser == null)
             {
                 return Unauthorized(_localizer["User_InvalidCredentials"].Value);
             }
 
-            HttpContext.Session.SetInt32("UserId", userId.Value);
-            var provereniId = HttpContext.Session.GetInt32("UserId");
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, loggedUser.IdOsoba.ToString()),
+                new Claim(ClaimTypes.Email, loggedUser.Email),
+                new Claim(ClaimTypes.Role, loggedUser.Uloga), 
+                new Claim("Ime", loggedUser.Ime),
+                new Claim("Prezime", loggedUser.Prezime)
+            };
 
-            return Ok(new { userId = userId.Value, sessionUserId = provereniId });
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TvojJakoDugacakITajniKljucKojiImaBar32Karaktera"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "MuzickiFestivaliBackend",
+                audience: "MuzickiFestivaliReact",
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Ok(new
+            {
+                Token = tokenString,
+                User = new
+                {
+                    idOsoba = loggedUser.IdOsoba,
+                    email = loggedUser.Email,
+                    uloga = loggedUser.Uloga,
+                    ime = loggedUser.Ime,
+                    prezime = loggedUser.Prezime
+                }
+            });
         }
 
-        [HttpPost("logout")]
-        public async Task<ActionResult> Logout()
-        {
-            await _mediator.Send(new LogoutUserCommand());
-            HttpContext.Session.Clear();
-            return Ok(_localizer["User_SuccessLogout"].Value);
-        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<DisplayUserDto>> GetById(int id)

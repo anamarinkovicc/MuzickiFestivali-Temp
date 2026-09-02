@@ -4,6 +4,10 @@ using MuzickiFestivali.Infrastructure;
 using MuzickiFestivali.Infrastructure.Repositories;
 using Scalar.AspNetCore;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<MuzickiFestivaliDbContext>(options =>
@@ -13,6 +17,25 @@ builder.Services.AddDbContext<MuzickiFestivaliDbContext>(options =>
 
 
 // Add services to the container.
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "MuzickiFestivaliBackend", 
+        ValidAudience = "MuzickiFestivaliReact",  
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TvojJakoDugacakITajniKljucKojiImaBar32Karaktera"))
+    };
+});
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -36,15 +59,15 @@ builder.Services.AddCors(options =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+//builder.Services.AddSession(options =>
+//{
+//    options.IdleTimeout = TimeSpan.FromMinutes(30);
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.IsEssential = true;
 
-    options.Cookie.SameSite = SameSiteMode.None;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-});
+//    options.Cookie.SameSite = SameSiteMode.None;
+//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//});
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -69,9 +92,11 @@ var localizationOptions = new RequestLocalizationOptions()
 
 app.UseRequestLocalization(localizationOptions);
 
-app.UseSession();
+//app.UseSession();
 
 app.UseCors("AllowReactApp");
+
+app.UseRouting();
 
 app.UseAuthentication();
 

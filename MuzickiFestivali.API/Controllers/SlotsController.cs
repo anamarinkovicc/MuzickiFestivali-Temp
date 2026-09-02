@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -8,6 +9,7 @@ using MuzickiFestivali.API.Features.Slots.Queries;
 
 namespace MuzickiFestivali.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SlotsController : ControllerBase
@@ -21,6 +23,7 @@ namespace MuzickiFestivali.API.Controllers
             _localizer = localizer;
         }
 
+        [Authorize(Roles = "Zaposleni")]
         [HttpPost("{idFestival}/{idNastup}")]
         public async Task<ActionResult<int>> Create(int idFestival, int idNastup, TerminDto dto)
         {
@@ -37,6 +40,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Zaposleni,Izvodjac")]
         [HttpGet("{idFestival}/{idNastup}")]
         public async Task<ActionResult<List<DisplayTerminDto>>> GetByNastup(int idFestival, int idNastup)
         {
@@ -44,6 +48,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult<DisplayTerminDto>> GetById(int idFestival, int idNastup, int idTermin)
         {
@@ -55,6 +60,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Zaposleni")]
         [HttpPut("{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult> Update(int idFestival, int idNastup, int idTermin, TerminDto dto)
         {
@@ -77,6 +83,7 @@ namespace MuzickiFestivali.API.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Zaposleni")]
         [HttpDelete("{idFestival}/{idNastup}/{idTermin}")]
         public async Task<ActionResult> Delete(int idFestival, int idNastup, int idTermin)
         {
@@ -88,6 +95,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(_localizer["Slot_SuccessDelete"].Value);
         }
 
+        [AllowAnonymous]
         [HttpGet("public/{idFestival}/{idNastup}")]
         public async Task<ActionResult<List<DisplayTerminDto>>> GetGlavniByNastup(int idFestival, int idNastup)
         {

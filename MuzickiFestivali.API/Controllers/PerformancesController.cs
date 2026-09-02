@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -8,6 +9,7 @@ using MuzickiFestivali.API.Features.Performances.Queries;
 
 namespace MuzickiFestivali.API.Controllers
 {
+    [Authorize(Roles = "Zaposleni")]
     [Route("api/[controller]")]
     [ApiController]
     public class PerformancesController : ControllerBase
@@ -29,6 +31,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("festival/{idFestival}")]
         public async Task<ActionResult<List<DisplayNastupDto>>> GetByFestival([FromRoute] int idFestival)
         {
@@ -36,6 +39,7 @@ namespace MuzickiFestivali.API.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("{idFestival}/{idNastup}")]
         public async Task<ActionResult<DisplayNastupDto>> GetById(int idFestival, int idNastup)
         {
