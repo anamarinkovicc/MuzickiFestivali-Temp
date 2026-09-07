@@ -31,5 +31,6 @@ namespace MuzickiFestivali.API.DTOs
             ErrorMessageResourceType = typeof(MuzickiFestivali.API.Resources.SharedResources),
             ErrorMessageResourceName = "Festival_CapacityRange")]
         public int Kapacitet { get; set; }
+        public string? SlikaUrl { get; set; }
     }
 }

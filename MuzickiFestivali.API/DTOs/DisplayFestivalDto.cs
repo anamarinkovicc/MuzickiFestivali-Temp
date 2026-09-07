@@ -10,5 +10,7 @@
         public int Kapacitet { get; set; }
 
         public bool JeUToku => DateTime.Now >= DatumPocetka && DateTime.Now <= DatumZavrsetka;
+
+        public string? SlikaUrl { get; set; }
     }
 }

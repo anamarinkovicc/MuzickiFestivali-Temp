@@ -9,7 +9,8 @@ namespace MuzickiFestivali.API.Features.Festivals.Commands
        string Opis,
        DateTime DatumPocetka,
        DateTime DatumZavrsetka,
-       int Kapacitet) : IRequest<bool>;
+       int Kapacitet,
+       string? SlikaUrl) : IRequest<bool>;
 
     public class UpdateFestivalCommandHandler : IRequestHandler<UpdateFestivalCommand, bool>
     {
@@ -28,6 +29,7 @@ namespace MuzickiFestivali.API.Features.Festivals.Commands
             festival.datumPocetka = request.DatumPocetka;
             festival.datumZavrsetka = request.DatumZavrsetka;
             festival.kapacitet = request.Kapacitet;
+            festival.SlikaUrl = request.SlikaUrl;
 
             _unitOfWork.Festivali.Update(festival);
             await _unitOfWork.CompleteAsync();

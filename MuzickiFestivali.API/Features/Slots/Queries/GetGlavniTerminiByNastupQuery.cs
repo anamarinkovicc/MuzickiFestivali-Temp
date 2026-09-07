@@ -26,7 +26,15 @@ namespace MuzickiFestivali.API.Features.Slots.Queries
                 VremeZavrsetka = t.vremeZavrsetka,
                 Tip = t.tip.ToString(),
                 IdBina = t.idBina,
-                Napomena = t.napomena
+                Napomena = t.napomena,
+                Izvodjaci = t.izvodjaci.Select(a => new SlotPerformerDto
+                {
+                    IdOsoba = a.idOsoba,
+                    ImePrezime = a.izvodjac.ime + " " + a.izvodjac.prezime,
+                    UmetnickoIme = a.izvodjac.umetnickoIme,
+                    Uloga = a.uloga,
+                    PotvrdjenDolazak = a.potvrdjenDolazak
+                }).ToList()
             }).ToList();
         }
     }

@@ -255,4 +255,7 @@
   <data name="Slot_OutsideFestivalDates" xml:space="preserve">
     <value>The slot must take place within the festival's start and end dates!</value>
   </data>
+  <data name="Festival_InvalidDateRange" xml:space="preserve">
+    <value>The festival end date cannot be earlier than the start date.</value>
+  </data>
 </root>

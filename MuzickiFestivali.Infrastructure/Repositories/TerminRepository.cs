@@ -20,11 +20,12 @@ namespace MuzickiFestivali.Infrastructure.Repositories
 
         public async Task<IEnumerable<Termin>> GetGlavniTerminiByNastupAsync(int idFestival, int idNastup)
         {
-            return await DbSet
-                .Where(t => t.idFestival == idFestival &&
-                            t.idNastup == idNastup &&
-                            t.tip == TipTermina.GlavniNastup)
-                .ToListAsync();
+            return await DbSet.Include(t => t.izvodjaci) 
+            .ThenInclude(a => a.izvodjac) 
+            .Where(t => t.idFestival == idFestival &&
+                        t.idNastup == idNastup &&
+                        t.tip == TipTermina.GlavniNastup)
+            .ToListAsync();
         }
     }
 }

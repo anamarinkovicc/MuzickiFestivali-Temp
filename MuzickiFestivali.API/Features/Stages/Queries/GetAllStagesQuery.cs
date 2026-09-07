@@ -20,9 +20,7 @@ namespace MuzickiFestivali.API.Features.Stages.Queries
             {
                 IdBina = b.idBina,
                 Naziv = b.naziv,
-                Kapacitet = b.kapacitet,
-                XKoordinata = b.xKoordinata,
-                YKoordinata = b.yKoordinata
+                Kapacitet = b.kapacitet
             }).ToList();
         }
     }

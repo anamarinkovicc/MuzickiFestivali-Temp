@@ -24,6 +24,11 @@ public class MuzickiFestivaliDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Osoba>().ToTable("Osobe").HasKey(o => o.idOsoba);
+
+        modelBuilder.Entity<Osoba>()
+        .HasIndex(o => o.email)
+        .IsUnique();
+
         modelBuilder.Entity<Zaposleni>().ToTable("Zaposleni");
         modelBuilder.Entity<Izvodjac>().ToTable("Izvodjaci");
         modelBuilder.Entity<Korisnik>().ToTable("Korisnici");
@@ -68,6 +73,12 @@ public class MuzickiFestivaliDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Bina>().ToTable("Bine").HasKey(b => b.idBina);
+        modelBuilder.Entity<Bina>(entity =>
+        {
+            entity.HasKey(e => e.idBina);
+            entity.Property(e => e.naziv).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.kapacitet).IsRequired();
+        });
 
         modelBuilder.Entity<Izvodjac>()
             .Property(i => i.zanr).HasConversion<string>();

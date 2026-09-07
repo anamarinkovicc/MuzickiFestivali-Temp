@@ -169,6 +169,15 @@ namespace MuzickiFestivali.API.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Datum završetka festivala ne može biti pre datuma početka..
+        /// </summary>
+        public static string Festival_InvalidDateRange {
+            get {
+                return ResourceManager.GetString("Festival_InvalidDateRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Naziv festivala ne može biti duži od 100 karaktera..
         /// </summary>
         public static string Festival_NameMaxLength {

@@ -10,5 +10,6 @@
         public string Tip { get; set; }
         public int IdBina { get; set; }
         public string? Napomena { get; set; }
+        public List<SlotPerformerDto> Izvodjaci { get; set; } = new();
     }
 }

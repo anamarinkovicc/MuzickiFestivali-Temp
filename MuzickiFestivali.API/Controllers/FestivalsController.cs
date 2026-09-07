@@ -42,7 +42,8 @@ namespace MuzickiFestivali.API.Controllers
                 dto.DatumPocetka,
                 dto.DatumZavrsetka,
                 dto.Kapacitet,
-                trenutniKorisnikId
+                trenutniKorisnikId,
+                dto.SlikaUrl
             );
 
             var result = await _mediator.Send(command);
@@ -78,7 +79,8 @@ namespace MuzickiFestivali.API.Controllers
                 dto.Opis,
                 dto.DatumPocetka,
                 dto.DatumZavrsetka,
-                dto.Kapacitet
+                dto.Kapacitet,
+                dto.SlikaUrl
             );
 
             var uspesno = await _mediator.Send(command);

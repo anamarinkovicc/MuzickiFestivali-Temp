@@ -23,7 +23,8 @@ namespace MuzickiFestivali.API.Features.Festivals.Queries
                 Opis = f.opis,
                 DatumPocetka = f.datumPocetka,
                 DatumZavrsetka = f.datumZavrsetka,
-                Kapacitet = f.kapacitet
+                Kapacitet = f.kapacitet,
+                SlikaUrl = f.SlikaUrl
             }).ToList();
         }
     }

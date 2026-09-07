@@ -15,5 +15,6 @@ namespace MuzickiFestivali.Domain.Entities
         public int idOsoba { get; set; }
         public virtual Zaposleni zaposleni { get; set; }
         public virtual ICollection<Nastup> nastupi { get; set; }
+        public string? SlikaUrl { get; set; }
     }
 }

@@ -255,4 +255,7 @@
   <data name="Slot_OutsideFestivalDates" xml:space="preserve">
     <value>Termin se mora održati u toku trajanja festivala!</value>
   </data>
+  <data name="Festival_InvalidDateRange" xml:space="preserve">
+    <value>Datum završetka festivala ne može biti pre datuma početka.</value>
+  </data>
 </root>
