@@ -33,7 +33,11 @@ public class MuzickiFestivaliDbContext : DbContext
         modelBuilder.Entity<Izvodjac>().ToTable("Izvodjaci");
         modelBuilder.Entity<Korisnik>().ToTable("Korisnici");
 
-        modelBuilder.Entity<Festival>().ToTable("Festivali").HasKey(f => f.idFestival);
+        modelBuilder.Entity<Festival>(entity =>
+        {
+            entity.ToTable("Festivali", t => t.HasCheckConstraint("CK_Festival_Kapacitet", "kapacitet > 0"));
+            entity.HasKey(f => f.idFestival);
+        });
         modelBuilder.Entity<Festival>()
             .HasOne(f => f.zaposleni)
             .WithMany(z => z.festivali)
@@ -72,13 +76,15 @@ public class MuzickiFestivaliDbContext : DbContext
             .HasForeignKey(t => t.idBina)
             .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<Bina>().ToTable("Bine").HasKey(b => b.idBina);
+        //modelBuilder.Entity<Bina>().ToTable("Bine").HasKey(b => b.idBina);
+        modelBuilder.Entity<Bina>().ToTable("Bine", t => t.HasCheckConstraint("CK_Bina_Kapacitet", "kapacitet > 0")).HasKey(b => b.idBina);
         modelBuilder.Entity<Bina>(entity =>
         {
             entity.HasKey(e => e.idBina);
             entity.Property(e => e.naziv).IsRequired().HasMaxLength(100);
             entity.Property(e => e.kapacitet).IsRequired();
         });
+
 
         modelBuilder.Entity<Izvodjac>()
             .Property(i => i.zanr).HasConversion<string>();
